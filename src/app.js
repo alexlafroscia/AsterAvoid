@@ -1,4 +1,5 @@
 var Myo = require('myo');
+var Ship = require('./ship');
 
 // Helper methods from myoExtended
 // https://github.com/MisterJack49/myoReveal/blob/master/myoExtended.js

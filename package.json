@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prestart": "open index.html",
-    "start": "watchify -t esnext src/app.js -d -o dist/app.js -v"
+    "open": "open index.html",
+    "start": "watchify -t esnext -x src/ship.js src/app.js -d -o dist/app.js -v"
   },
   "author": "",
   "license": "ISC",
