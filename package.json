@@ -3,10 +3,13 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "esnext": "^0.13.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "watchify src/app.js -d -o dist/app.js -v"
+    "prestart": "open index.html",
+    "start": "watchify -t esnext src/app.js -d -o dist/app.js -v"
   },
   "author": "",
   "license": "ISC",
