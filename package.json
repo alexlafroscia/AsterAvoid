@@ -15,5 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "myo": "git://github.com/stolksdorf/myo.js"
+  },
+  "jshintConfig" : {
+    "esnext": true
   }
 }
