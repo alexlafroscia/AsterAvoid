@@ -13,12 +13,14 @@ var controller = new Controller('myo', myo);
 var ship = new Ship();
 var player1 = new Player(controller, ship);
 
-game.addPlayer(ship);
+game.addPlayer(player1);
 
 // Render Loop
 function render() {
   requestAnimationFrame(render);
-  player1.updatePosition();
+  for (var i = 0; i < game.players.length; i++) {
+    game.players[i].updatePosition();
+  }
   game.rerender();
 }
 render();

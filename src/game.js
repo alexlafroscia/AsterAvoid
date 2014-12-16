@@ -34,7 +34,7 @@ Object.defineProperties(Game.prototype, {
   addPlayer: {
     value: function(player) {
       this.players.push(player);
-      this.scene.add(player.geo);
+      this.scene.add(player.ship.geo);
     }
   }
 });
