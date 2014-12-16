@@ -2,36 +2,18 @@ var Myo = require('myo');
 var Ship = require('./ship.js');
 var Player = require('./player.js');
 var Game = require('./game.js');
+var Controller = require('./controller.js');
 
 
 // My Code
 var yValue = 0;
 var xValue = 0;
 var baseYaw = null;
+
+// Start the game
 var myo = Myo.create();
-
-
-function getBaseYaw(data) {
-  baseYaw = getYaw(data.lastIMU.orientation);
-}
-
-// Use the accelerometer to get the up/down pitch of the arm
-myo.on('accelerometer', function(data) {
-  if (this.direction == 'toward_elbow') {
-    yValue = -data.x;
-  } else {
-    yValue = data.x;
-  }
-});
-
-// Use the orientation to get the "yaw", which can be used to determine
-// which direction the arm is facing
-myo.on('orientation', function(data) {
-  if (baseYaw === null)
-    getBaseYaw(this);
-  var thisYaw = getYaw(this.lastIMU.orientation);
-  xValue = -(thisYaw - baseYaw) / 5;
-});
+var controller = new Controller('myo', myo);
+var player1 = new Player(controller);
 
 
 // Make a new scene and camera
@@ -63,8 +45,8 @@ camera.position.z = 5;
 // Render Loop
 function render() {
   requestAnimationFrame(render);
-  //cube.translateY(yValue);
-  //cube.translateX(xValue);
+  cube.translateY(player1.yValue);
+  cube.translateX(player1.xValue);
   renderer.render(scene, camera);
 }
 render();
