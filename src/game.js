@@ -11,6 +11,7 @@ function Game() {
   );
   this.camera.position.set(0, 10, 10);
   this.camera.lookAt(this.scene.position);
+  this.camera.position.z = 5;
 
   // Make a renderer and add it to the page
   this.renderer = new THREE.WebGLRenderer();
@@ -26,6 +27,14 @@ Object.defineProperties(Game.prototype, {
   rerender: {
     value: function() {
       this.renderer.render(this.scene, this.camera);
+    }
+  },
+
+  // Add a player to the game
+  addPlayer: {
+    value: function(player) {
+      this.players.push(player);
+      this.scene.add(player.geo);
     }
   }
 });

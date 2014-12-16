@@ -323,25 +323,15 @@ var Controller = require('./controller.js');
 var game = new Game();
 var myo = Myo.create();
 var controller = new Controller('myo', myo);
-var player1 = new Player(controller);
+var ship = new Ship();
+var player1 = new Player(controller, ship);
 
-// Make a cube
-geometry = new THREE.BoxGeometry(1, 1, 1);
-material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00
-});
-
-var cube = new THREE.Mesh(geometry, material);
-
-game.scene.add(cube);
-
-game.camera.position.z = 5;
+game.addPlayer(ship);
 
 // Render Loop
 function render() {
   requestAnimationFrame(render);
-  //cube.translateY(player1.yValue);
-  //cube.translateX(player1.xValue);
+  player1.updatePosition();
   game.rerender();
 }
 render();
@@ -417,6 +407,7 @@ function Game() {
   );
   this.camera.position.set(0, 10, 10);
   this.camera.lookAt(this.scene.position);
+  this.camera.position.z = 5;
 
   // Make a renderer and add it to the page
   this.renderer = new THREE.WebGLRenderer();
@@ -433,6 +424,14 @@ Object.defineProperties(Game.prototype, {
     value: function() {
       this.renderer.render(this.scene, this.camera);
     }
+  },
+
+  // Add a player to the game
+  addPlayer: {
+    value: function(player) {
+      this.players.push(player);
+      this.scene.add(player.geo);
+    }
   }
 });
 
@@ -440,8 +439,9 @@ module.exports = Game;
 
 
 },{}],6:[function(require,module,exports){
-function Player(controller) {
+function Player(controller, ship) {
   this.controller = controller;
+  this.ship = ship;
 }
 
 Object.defineProperties(Player.prototype, {
@@ -454,6 +454,11 @@ Object.defineProperties(Player.prototype, {
     get: function() {
       return this.controller.yValue;
     }
+  },
+  updatePosition: {
+    value: function() {
+      this.ship.move(this.xValue, this.yValue);
+    }
   }
 });
 
@@ -461,10 +466,25 @@ module.exports = Player;
 
 },{}],7:[function(require,module,exports){
 function Ship() {
-  this.toString = function() {
-    return "This is a test";
-  };
+
+  // Make the actual ship object
+  geometry = new THREE.BoxGeometry(1, 1, 1);
+  material = new THREE.MeshBasicMaterial({
+    color: 0x00ff00
+  });
+
+  this.geo = new THREE.Mesh(geometry, material);
 }
+
+Object.defineProperties(Ship.prototype, {
+  // Update the location of the ship
+  move: {
+    value: function(x, y) {
+      this.geo.translateX(x);
+      this.geo.translateY(y);
+    }
+  }
+});
 
 module.exports = Ship;
 

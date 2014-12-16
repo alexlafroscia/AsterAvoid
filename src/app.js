@@ -10,25 +10,15 @@ var Controller = require('./controller.js');
 var game = new Game();
 var myo = Myo.create();
 var controller = new Controller('myo', myo);
-var player1 = new Player(controller);
+var ship = new Ship();
+var player1 = new Player(controller, ship);
 
-// Make a cube
-geometry = new THREE.BoxGeometry(1, 1, 1);
-material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00
-});
-
-var cube = new THREE.Mesh(geometry, material);
-
-game.scene.add(cube);
-
-game.camera.position.z = 5;
+game.addPlayer(ship);
 
 // Render Loop
 function render() {
   requestAnimationFrame(render);
-  //cube.translateY(player1.yValue);
-  //cube.translateX(player1.xValue);
+  player1.updatePosition();
   game.rerender();
 }
 render();
