@@ -311,6 +311,7 @@ function ws(uri, protocols, opts) {
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
 },{}],3:[function(require,module,exports){
+// Require components from other files
 var Myo = require('myo');
 var Ship = require('./ship.js');
 var Player = require('./player.js');
@@ -318,49 +319,30 @@ var Game = require('./game.js');
 var Controller = require('./controller.js');
 
 
-// My Code
-var yValue = 0;
-var xValue = 0;
-var baseYaw = null;
-
 // Start the game
+var game = new Game();
 var myo = Myo.create();
 var controller = new Controller('myo', myo);
 var player1 = new Player(controller);
-
-
-// Make a new scene and camera
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(
-  75,                                       // Field of View
-  window.innerWidth / window.innerHeight,   // Aspect Ratio (match screen size)
-  0.1,                                      // Near
-  1000                                      // Far
-);
-camera.position.set(0, 10, 10);
-camera.lookAt(scene.position);
-
-// Make a renderer and add it to the page
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
 
 // Make a cube
 geometry = new THREE.BoxGeometry(1, 1, 1);
 material = new THREE.MeshBasicMaterial({
   color: 0x00ff00
 });
-var cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
 
-camera.position.z = 5;
+var cube = new THREE.Mesh(geometry, material);
+
+game.scene.add(cube);
+
+game.camera.position.z = 5;
 
 // Render Loop
 function render() {
   requestAnimationFrame(render);
-  cube.translateY(player1.yValue);
-  cube.translateX(player1.xValue);
-  renderer.render(scene, camera);
+  //cube.translateY(player1.yValue);
+  //cube.translateX(player1.xValue);
+  game.rerender();
 }
 render();
 
@@ -423,10 +405,36 @@ module.exports = Controller;
 
 },{}],5:[function(require,module,exports){
 function Game() {
-
   this.players = [];
 
+  // Make a new scene and camera
+  this.scene = new THREE.Scene();
+  this.camera = new THREE.PerspectiveCamera(
+    75,                                       // Field of View
+    window.innerWidth / window.innerHeight,   // Aspect Ratio (match screen size)
+    0.1,                                      // Near
+    1000                                      // Far
+  );
+  this.camera.position.set(0, 10, 10);
+  this.camera.lookAt(this.scene.position);
+
+  // Make a renderer and add it to the page
+  this.renderer = new THREE.WebGLRenderer();
+  this.renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(this.renderer.domElement);
+
 }
+
+
+Object.defineProperties(Game.prototype, {
+
+  // Rerender the scene
+  rerender: {
+    value: function() {
+      this.renderer.render(this.scene, this.camera);
+    }
+  }
+});
 
 module.exports = Game;
 
