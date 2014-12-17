@@ -1,7 +1,9 @@
-# Require components from other files
+# Instance getter/setter through Object.defineProperty
+# http://stackoverflow.com/a/11592890
 Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
 
+# Require components from other files
 Myo = require('myo')
 Ship = require('./ship.coffee')
 Player = require('./player.coffee')

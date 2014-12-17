@@ -8,12 +8,15 @@ module.exports = (grunt)->
       server:
         options:
           port: 8000
+          livereload: true
 
     # grunt-contrib-watch
     watch:
       js:
         files: ['src/**/*.coffee', 'src/**/*.js']
         tasks: ['build']
+        options:
+          livereload: true
 
     # grunt-browserify
     browserify:
