@@ -1,9 +1,9 @@
 class Controller
 
   constructor: (@type, @myo = null)->
-    this.xValue = 0;
-    this.yValue = 0;
-    this.baseYaw = null;
+    @xValue = 0
+    @yValue = 0
+    @baseYaw = null
 
     if type == 'myo'
       # Use the accelerometer to get the up/down pitch of the arm
@@ -20,6 +20,10 @@ class Controller
         thisYaw = @getYaw()
         @xValue = -(thisYaw - @baseYaw) / 5
 
+
+  ###
+  # Instance methods
+  ###
 
   # Get the yaw fromt this controller
   getYaw: ->

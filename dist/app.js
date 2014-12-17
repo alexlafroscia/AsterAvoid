@@ -385,6 +385,11 @@ Controller = (function() {
     }
   }
 
+
+  /*
+   * Instance methods
+   */
+
   Controller.prototype.getYaw = function() {
     var data, p1, yaw, yaw_w;
     if (this.type === 'myo') {
@@ -426,6 +431,11 @@ Game = (function() {
     document.body.appendChild(this.renderer.domElement);
   }
 
+
+  /*
+   * Instance methods
+   */
+
   Game.prototype.rerender = function() {
     return this.renderer.render(this.scene, this.camera);
   };
@@ -452,6 +462,11 @@ Player = (function() {
     this.ship = ship;
   }
 
+
+  /*
+   * Instance properties
+   */
+
   Player.property('xValue', {
     get: function() {
       return this.controller.xValue;
@@ -463,6 +478,11 @@ Player = (function() {
       return this.controller.yValue;
     }
   });
+
+
+  /*
+   * Instance methods
+   */
 
   Player.prototype.updatePosition = function() {
     return this.ship.move(this.xValue, this.yValue);
@@ -488,6 +508,11 @@ Ship = (function() {
     });
     this.geo = new THREE.Mesh(geometry, material);
   }
+
+
+  /*
+   * Instance methods
+   */
 
   Ship.prototype.move = function(x, y) {
     this.geo.translateX(x);

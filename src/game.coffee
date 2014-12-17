@@ -21,6 +21,10 @@ class Game
     document.body.appendChild @renderer.domElement
 
 
+  ###
+  # Instance methods
+  ###
+
   # Rerender the scene
   rerender: ->
     @renderer.render @scene, @camera
