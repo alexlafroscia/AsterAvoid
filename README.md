@@ -1,7 +1,11 @@
 cubefield-myo
 =============
 
-My implementation of Cubefield, using Three.js and a Myo by Thalmic
+[![Build Status](https://travis-ci.org/alexlafroscia/cubefield-myo.svg?branch=master)](https://travis-ci.org/alexlafroscia/cubefield-myo)
+
+My implementation of Cubefield, using Three.js and a Myo by Thalmic.
+
+You can play the game in your browser [here](http://alexlafroscia.com/cubefield-myo/).
 
 
 Development
