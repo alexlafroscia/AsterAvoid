@@ -1,12 +1,11 @@
 {
-  "name": "myo-test",
+  "name": "cubefield-myo",
   "version": "0.0.1",
-  "description": "",
+  "description": "It's like Cubefield, but with Myos!",
   "repository": {
     "type": "git",
     "url": "http://github.com:alexlafroscia/cubefield-myo.git"
   },
-  "main": "index.js",
   "devDependencies": {
     "coffeeify": "^1.0.0",
     "grunt": "^0.4.5",
@@ -17,8 +16,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "open": "open index.html",
-    "start": "watchify -t coffeeify -t esnext -t es6-class src/app.js -o dist/app.js"
+    "start": "grunt server"
   },
   "author": "",
   "license": "ISC",
