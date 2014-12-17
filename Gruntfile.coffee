@@ -9,6 +9,7 @@ module.exports = (grunt)->
         options:
           port: 8000
           livereload: true
+          base: 'dist/'
 
     # grunt-contrib-watch
     watch:
@@ -26,6 +27,16 @@ module.exports = (grunt)->
         options:
           transform: ['coffeeify']
 
+    # grunt-contrib-copy
+    copy:
+      html:
+        files: [{
+          expand: true
+          flatten: true
+          src: ['src/index.html']
+          dest: 'dist/'
+        }]
+
 
   ###
   # Load NPM Modules
@@ -33,6 +44,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-browserify'
+  grunt.loadNpmTasks 'grunt-contrib-copy'
 
 
   ###
@@ -47,6 +59,7 @@ module.exports = (grunt)->
   ]
 
   grunt.registerTask 'build', [
-    'browserify:dist'
+    'browserify:dist',
+    'copy:html'
   ]
 
