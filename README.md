@@ -9,14 +9,14 @@ Development
 
 1. Install dependencies
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
 2. Run development server
 
-```bash
-grunt
-```
+    ```bash
+    grunt
+    ```
 
 3. Do your thang
