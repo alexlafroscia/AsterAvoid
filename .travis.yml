@@ -1,0 +1,11 @@
+language: coffeescript
+install: npm install grunt-cli
+script:
+  - npm install
+  - grunt build
+after_success:
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh
+env:
+  global:
+    - secure: "K3XhMnO9OHIKFNjvOlPhO0824bhZlGYHX6vDPkVl0cE9ehT1g9njTekm6mjGvULfiOsFyPTXRhkrdrA12N/qKOT6N2LVBgvfLh/uiwPFNf4EoiyXnaCWbh3oyt7Uz87FBgqW5BFHjqxK5M2kqbj+3XhZSJUYm8JvgQqN5HHnbAo="
+
