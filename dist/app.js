@@ -311,32 +311,42 @@ function ws(uri, protocols, opts) {
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
 },{}],3:[function(require,module,exports){
-// Require components from other files
-var Myo = require('myo');
-var Ship = require('./ship.js');
-var Player = require('./player.js');
-var Game = require('./game.js');
-var Controller = require('./controller.js');
+var Controller, Game, Myo, Player, Ship, controller, game, myo, player1, render, ship;
 
+Myo = require('myo');
 
-// Start the game
-var game = new Game();
-var myo = Myo.create();
-var controller = new Controller('myo', myo);
-var ship = new Ship();
-var player1 = new Player(controller, ship);
+Ship = require('./ship.js');
+
+Player = require('./player.js');
+
+Game = require('./game.js');
+
+Controller = require('./controller.js');
+
+game = new Game();
+
+myo = Myo.create();
+
+controller = new Controller('myo', myo);
+
+ship = new Ship();
+
+player1 = new Player(controller, ship);
 
 game.addPlayer(player1);
 
-// Render Loop
-function render() {
+render = function() {
+  var i, _i, _ref;
   requestAnimationFrame(render);
-  for (var i = 0; i < game.players.length; i++) {
+  for (i = _i = 0, _ref = game.players.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
     game.players[i].updatePosition();
   }
-  game.rerender();
-}
+  return game.rerender();
+};
+
 render();
+
+
 
 },{"./controller.js":4,"./game.js":5,"./player.js":6,"./ship.js":7,"myo":1}],4:[function(require,module,exports){
 function Controller(type, myo) {
@@ -490,4 +500,4 @@ Object.defineProperties(Ship.prototype, {
 
 module.exports = Ship;
 
-},{}]},{},[3]);
+},{}]},{},[4,5,6,7,3]);
