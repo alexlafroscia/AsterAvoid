@@ -1,9 +1,12 @@
 # Require components from other files
+Function::property = (prop, desc) ->
+  Object.defineProperty @prototype, prop, desc
+
 Myo = require('myo')
-Ship = require('./ship.js')
-Player = require('./player.js')
-Game = require('./game.js')
-Controller = require('./controller.js')
+Ship = require('./ship.coffee')
+Player = require('./player.coffee')
+Game = require('./game.coffee')
+Controller = require('./controller.coffee')
 
 
 # Start the game

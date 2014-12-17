@@ -313,15 +313,19 @@ if (WebSocket) ws.prototype = WebSocket.prototype;
 },{}],3:[function(require,module,exports){
 var Controller, Game, Myo, Player, Ship, controller, game, myo, player1, render, ship;
 
+Function.prototype.property = function(prop, desc) {
+  return Object.defineProperty(this.prototype, prop, desc);
+};
+
 Myo = require('myo');
 
-Ship = require('./ship.js');
+Ship = require('./ship.coffee');
 
-Player = require('./player.js');
+Player = require('./player.coffee');
 
-Game = require('./game.js');
+Game = require('./game.coffee');
 
-Controller = require('./controller.js');
+Controller = require('./controller.coffee');
 
 game = new Game();
 
@@ -348,156 +352,154 @@ render();
 
 
 
-},{"./controller.js":4,"./game.js":5,"./player.js":6,"./ship.js":7,"myo":1}],4:[function(require,module,exports){
-function Controller(type, myo) {
-  this.type = type;
-  this.myo = myo;
-  this.xValue = 0;
-  this.yValue = 0;
-  this.baseYaw = null;
+},{"./controller.coffee":4,"./game.coffee":5,"./player.coffee":6,"./ship.coffee":7,"myo":1}],4:[function(require,module,exports){
+var Controller;
 
-  if (type == 'myo') {
-    // Use the accelerometer to get the up/down pitch of the arm
-    var controller = this;
-    myo.on('accelerometer', function(data) {
-      if (this.direction == 'toward_elbow') {
-        controller.yValue = -data.x;
-      } else {
-        controller.yValue = data.x;
-      }
-    });
-
-    // Use the orientation to get the "yaw", which can be used to determine
-    // which direction the arm is facing
-    myo.on('orientation', function(data) {
-      if (controller.baseYaw === null)
-        controller.getBaseYaw();
-      var thisYaw = controller.getYaw();
-      controller.xValue = -(thisYaw - controller.baseYaw) / 5;
-    });
-  }
-}
-
-
-// Get the yaw fromt this controller
-Object.defineProperties(Controller.prototype, {
-  getYaw: {
-    value: function() {
-      if (this.type == 'myo') {
-        var data = this.myo.lastIMU.orientation;
-        var yaw = Math.atan2(2.0 * (data.w * data.z + data.x * data.y), 1.0 - 2.0 * (data.y * data.y + data.z * data.z));
-        var yaw_w = ((yaw + Math.PI/2.0)/Math.PI * 18);
-        return yaw_w;
-      }
-    }
-  },
-
-  // Get the base yaw for this controller, so we can compute the difference
-  getBaseYaw: {
-    value: function() {
-      if (this.type == 'myo') {
-        this.baseYaw = this.getYaw();
-      }
+Controller = (function() {
+  function Controller(type, myo) {
+    this.type = type;
+    this.myo = myo != null ? myo : null;
+    this.xValue = 0;
+    this.yValue = 0;
+    this.baseYaw = null;
+    if (type === 'myo') {
+      myo.on('accelerometer', (function(_this) {
+        return function(data) {
+          if (_this.direction === 'toward_elbow') {
+            return controller.yValue = -data.x;
+          } else {
+            return controller.yValue = data.x;
+          }
+        };
+      })(this));
+      myo.on('orientation', (function(_this) {
+        return function(data) {
+          var thisYaw;
+          if (_this.baseYaw == null) {
+            _this.getBaseYaw();
+          }
+          thisYaw = _this.getYaw();
+          return _this.xValue = -(thisYaw - _this.baseYaw) / 5;
+        };
+      })(this));
     }
   }
-});
+
+  Controller.prototype.getYaw = function() {
+    var data, p1, yaw, yaw_w;
+    if (this.type === 'myo') {
+      data = this.myo.lastIMU.orientation;
+      p1 = 2.0 * (data.w * data.z + data.x * data.y);
+      yaw = Math.atan2(p1, 1.0 - 2.0 * (data.y * data.y + data.z * data.z));
+      yaw_w = (yaw + Math.PI / 2.0) / Math.PI * 18;
+      return yaw_w;
+    }
+  };
+
+  Controller.prototype.getBaseYaw = function() {
+    if (this.type === 'myo') {
+      return this.baseYaw = this.getYaw();
+    }
+  };
+
+  return Controller;
+
+})();
 
 module.exports = Controller;
 
 
+
 },{}],5:[function(require,module,exports){
-function Game() {
-  this.players = [];
+var Game;
 
-  // Make a new scene and camera
-  this.scene = new THREE.Scene();
-  this.camera = new THREE.PerspectiveCamera(
-    75,                                       // Field of View
-    window.innerWidth / window.innerHeight,   // Aspect Ratio (match screen size)
-    0.1,                                      // Near
-    1000                                      // Far
-  );
-  this.camera.position.set(0, 10, 10);
-  this.camera.lookAt(this.scene.position);
-  this.camera.position.z = 5;
-
-  // Make a renderer and add it to the page
-  this.renderer = new THREE.WebGLRenderer();
-  this.renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(this.renderer.domElement);
-
-}
-
-
-Object.defineProperties(Game.prototype, {
-
-  // Rerender the scene
-  rerender: {
-    value: function() {
-      this.renderer.render(this.scene, this.camera);
-    }
-  },
-
-  // Add a player to the game
-  addPlayer: {
-    value: function(player) {
-      this.players.push(player);
-      this.scene.add(player.ship.geo);
-    }
+Game = (function() {
+  function Game() {
+    this.players = [];
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera.position.set(0, 10, 10);
+    this.camera.lookAt(this.scene.position);
+    this.camera.position.z = 5;
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(this.renderer.domElement);
   }
-});
+
+  Game.prototype.rerender = function() {
+    return this.renderer.render(this.scene, this.camera);
+  };
+
+  Game.prototype.addPlayer = function(player) {
+    this.players.push(player);
+    return this.scene.add(player.ship.geo);
+  };
+
+  return Game;
+
+})();
 
 module.exports = Game;
 
 
-},{}],6:[function(require,module,exports){
-function Player(controller, ship) {
-  this.controller = controller;
-  this.ship = ship;
-}
 
-Object.defineProperties(Player.prototype, {
-  xValue: {
+},{}],6:[function(require,module,exports){
+var Player;
+
+Player = (function() {
+  function Player(controller, ship) {
+    this.controller = controller;
+    this.ship = ship;
+  }
+
+  Player.property('xValue', {
     get: function() {
       return this.controller.xValue;
     }
-  },
-  yValue: {
+  });
+
+  Player.property('yValue', {
     get: function() {
       return this.controller.yValue;
     }
-  },
-  updatePosition: {
-    value: function() {
-      this.ship.move(this.xValue, this.yValue);
-    }
-  }
-});
+  });
+
+  Player.prototype.updatePosition = function() {
+    return this.ship.move(this.xValue, this.yValue);
+  };
+
+  return Player;
+
+})();
 
 module.exports = Player;
 
+
+
 },{}],7:[function(require,module,exports){
-function Ship() {
+var Ship;
 
-  // Make the actual ship object
-  geometry = new THREE.BoxGeometry(1, 1, 1);
-  material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00
-  });
-
-  this.geo = new THREE.Mesh(geometry, material);
-}
-
-Object.defineProperties(Ship.prototype, {
-  // Update the location of the ship
-  move: {
-    value: function(x, y) {
-      this.geo.translateX(x);
-      this.geo.translateY(y);
-    }
+Ship = (function() {
+  function Ship() {
+    var geometry, material;
+    geometry = new THREE.BoxGeometry(1, 1, 1);
+    material = new THREE.MeshBasicMaterial({
+      color: 0x00ff00
+    });
+    this.geo = new THREE.Mesh(geometry, material);
   }
-});
+
+  Ship.prototype.move = function(x, y) {
+    this.geo.translateX(x);
+    return this.geo.translateY(y);
+  };
+
+  return Ship;
+
+})();
 
 module.exports = Ship;
 
-},{}]},{},[4,5,6,7,3]);
+
+
+},{}]},{},[3,4,5,6,7]);
