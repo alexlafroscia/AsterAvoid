@@ -14,9 +14,14 @@ class Game
       0.1,                                      # Near
       1000                                      # Far
     )
-    @camera.position.set 0, 10, 10
+    @camera.position.set 0, 10, 30
     @camera.lookAt @scene.position
-    @camera.position.z = 5
+    @camera.position.z = 10
+
+    # Add lighting
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
+    directionalLight.position.set( 0, 1, 1 )
+    @scene.add( directionalLight )
 
     # Make a renderer and add it to the page
     @renderer = new THREE.WebGLRenderer()
