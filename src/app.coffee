@@ -4,16 +4,14 @@ Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
 
 # Require components from other files
-Myo = require('myo')
-Player = require('./player.coffee')
 Game = require('./game.coffee')
-Controller = require('./controller.coffee')
+Player = require('./player.coffee')
+MyoController = require('./controllers/myo.coffee')
 
 
 # Start the game
 game = new Game()
-myo = Myo.create()
-controller = new Controller('myo', myo)
+controller = new MyoController()
 player1 = new Player(controller)
 
 game.addPlayer(player1)
