@@ -36,6 +36,13 @@ module.exports = (grunt)->
           src: ['src/index.html']
           dest: 'dist/'
         }]
+      models:
+        files: [{
+          expand: true
+          flatten: true
+          src: ['models/*.json']
+          dest: 'dist/models'
+        }]
 
 
   ###
@@ -61,6 +68,7 @@ module.exports = (grunt)->
 
   grunt.registerTask 'build', [
     'browserify:dist',
-    'copy:html'
+    'copy:html',
+    'copy:models'
   ]
 
