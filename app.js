@@ -429,15 +429,18 @@ var Game;
 
 Game = (function() {
   function Game() {
-    var height, width;
+    var directionalLight, height, width;
     this.players = [];
     width = window.innerWidth;
     height = window.innerHeight;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    this.camera.position.set(0, 10, 10);
+    this.camera.position.set(0, 10, 30);
     this.camera.lookAt(this.scene.position);
-    this.camera.position.z = 5;
+    this.camera.position.z = 10;
+    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0, 1, 1);
+    this.scene.add(directionalLight);
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(width, height);
     document.body.appendChild(this.renderer.domElement);
@@ -520,9 +523,10 @@ var Ship;
 Ship = (function() {
   function Ship(scene) {
     var loader, material;
-    material = new THREE.MeshBasicMaterial({
-      color: 0xffffff
+    material = new THREE.MeshLambertMaterial({
+      color: 'blue'
     });
+    material.shading = THREE.FlatShading;
     loader = new THREE.JSONLoader();
     loader.load('models/ship.json', (function(_this) {
       return function(geometry) {
