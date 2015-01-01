@@ -1,10 +1,19 @@
 class Ship
 
-  constructor: ->
-    geometry = new THREE.BoxGeometry 1, 1, 1
+  constructor: (scene)->
     material = new THREE.MeshBasicMaterial
-      color: 0x00ff00
-    @geo = new THREE.Mesh geometry, material
+      color: 0xffffff
+    loader = new THREE.JSONLoader()
+    loader.load 'models/ship.json', (geometry)=>
+      @geo = new THREE.Mesh geometry, material
+      @geo.scale.set 1, 1, 1
+      @geo.position.y = 0
+      @geo.position.x = 0
+
+      # The geometry has to be added in the callback after loading the model, so
+      # we need to pass the scene from the game, through the Player, to the
+      # ship's constructor
+      scene.add @geo
 
 
   ###
@@ -13,7 +22,7 @@ class Ship
 
   # Update the location of the ship
   move: (x, y)->
-    @geo.translateX x
-    @geo.translateY y
+    @geo?.translateX x
+    @geo?.translateY y
 
 module.exports = Ship

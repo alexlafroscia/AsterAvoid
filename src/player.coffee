@@ -1,6 +1,8 @@
+Ship = require('./ship.coffee')
+
 class Player
 
-  constructor: (@controller, @ship)->
+  constructor: (@controller)->
 
 
   ###
@@ -19,6 +21,9 @@ class Player
   ###
 
   updatePosition: ->
-    @ship.move @xValue, @yValue
+    @ship?.move @xValue, @yValue
+
+  initMesh: (scene)->
+    @ship = new Ship(scene)
 
 module.exports = Player

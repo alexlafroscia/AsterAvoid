@@ -35,6 +35,6 @@ class Game
   # Add a player to the game
   addPlayer: (player)->
     @players.push player
-    @scene.add player.ship.geo
+    player.initMesh @scene
 
 module.exports = Game

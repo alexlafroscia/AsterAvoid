@@ -5,7 +5,6 @@ Function::property = (prop, desc) ->
 
 # Require components from other files
 Myo = require('myo')
-Ship = require('./ship.coffee')
 Player = require('./player.coffee')
 Game = require('./game.coffee')
 Controller = require('./controller.coffee')
@@ -15,8 +14,7 @@ Controller = require('./controller.coffee')
 game = new Game()
 myo = Myo.create()
 controller = new Controller('myo', myo)
-ship = new Ship()
-player1 = new Player(controller, ship)
+player1 = new Player(controller)
 
 game.addPlayer(player1)
 
