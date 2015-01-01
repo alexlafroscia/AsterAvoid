@@ -3,11 +3,14 @@ class Game
   constructor: ->
     @players = []
 
+    width = window.innerWidth
+    height = window.innerHeight
+
     # Make a new scene and camera
     @scene = new THREE.Scene()
     @camera = new THREE.PerspectiveCamera(
       75,                                       # Field of View
-      window.innerWidth / window.innerHeight,   # Aspect Ratio
+      width / height,                           # Aspect Ratio
       0.1,                                      # Near
       1000                                      # Far
     )
@@ -17,7 +20,7 @@ class Game
 
     # Make a renderer and add it to the page
     @renderer = new THREE.WebGLRenderer()
-    @renderer.setSize window.innerWidth, window.innerHeight
+    @renderer.setSize width, height
     document.body.appendChild @renderer.domElement
 
 
