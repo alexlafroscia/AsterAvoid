@@ -52,6 +52,7 @@ module.exports = (grunt)->
   ###
   grunt.registerTask 'default', ['server']
 
+  grunt.registerTask 'serve', ['server']
   grunt.registerTask 'server', [
     'build',
     'connect:server',
