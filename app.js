@@ -88,6 +88,9 @@
 		'disconnected' : function(myo, data){
 			myo.isConnected = false;
 			myo.trigger(data.type, data);
+		},
+		'emg' : function(myo, data){
+			myo.trigger(data.type, data.emg)
 		}
 	};
 
@@ -207,6 +210,16 @@
 			}]));
 			return this;
 		},
+		streamEMG : function(enabled){
+			var type = 'enabled';
+			if(enabled === false) type = 'disabled';
+			Myo.socket.send(JSON.stringify(['command',{
+				"command": "set_stream_emg",
+				"myo": this.id,
+				"type" : type
+			}]));
+			return this;
+		},
 	}
 
 
@@ -311,15 +324,13 @@ function ws(uri, protocols, opts) {
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
 },{}],3:[function(require,module,exports){
-var Controller, Game, Myo, Player, Ship, controller, game, myo, player1, render, ship;
+var Controller, Game, Myo, Player, controller, game, myo, player1, render;
 
 Function.prototype.property = function(prop, desc) {
   return Object.defineProperty(this.prototype, prop, desc);
 };
 
 Myo = require('myo');
-
-Ship = require('./ship.coffee');
 
 Player = require('./player.coffee');
 
@@ -333,9 +344,7 @@ myo = Myo.create();
 
 controller = new Controller('myo', myo);
 
-ship = new Ship();
-
-player1 = new Player(controller, ship);
+player1 = new Player(controller);
 
 game.addPlayer(player1);
 
@@ -352,7 +361,7 @@ render();
 
 
 
-},{"./controller.coffee":4,"./game.coffee":5,"./player.coffee":6,"./ship.coffee":7,"myo":1}],4:[function(require,module,exports){
+},{"./controller.coffee":4,"./game.coffee":5,"./player.coffee":6,"myo":1}],4:[function(require,module,exports){
 var Controller;
 
 Controller = (function() {
@@ -420,14 +429,17 @@ var Game;
 
 Game = (function() {
   function Game() {
+    var height, width;
     this.players = [];
+    width = window.innerWidth;
+    height = window.innerHeight;
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     this.camera.position.set(0, 10, 10);
     this.camera.lookAt(this.scene.position);
     this.camera.position.z = 5;
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(width, height);
     document.body.appendChild(this.renderer.domElement);
   }
 
@@ -442,7 +454,7 @@ Game = (function() {
 
   Game.prototype.addPlayer = function(player) {
     this.players.push(player);
-    return this.scene.add(player.ship.geo);
+    return player.initMesh(this.scene);
   };
 
   return Game;
@@ -454,12 +466,13 @@ module.exports = Game;
 
 
 },{}],6:[function(require,module,exports){
-var Player;
+var Player, Ship;
+
+Ship = require('./ship.coffee');
 
 Player = (function() {
-  function Player(controller, ship) {
+  function Player(controller) {
     this.controller = controller;
-    this.ship = ship;
   }
 
 
@@ -485,7 +498,12 @@ Player = (function() {
    */
 
   Player.prototype.updatePosition = function() {
-    return this.ship.move(this.xValue, this.yValue);
+    var _ref;
+    return (_ref = this.ship) != null ? _ref.move(this.xValue, this.yValue) : void 0;
+  };
+
+  Player.prototype.initMesh = function(scene) {
+    return this.ship = new Ship(scene);
   };
 
   return Player;
@@ -496,17 +514,25 @@ module.exports = Player;
 
 
 
-},{}],7:[function(require,module,exports){
+},{"./ship.coffee":7}],7:[function(require,module,exports){
 var Ship;
 
 Ship = (function() {
-  function Ship() {
-    var geometry, material;
-    geometry = new THREE.BoxGeometry(1, 1, 1);
+  function Ship(scene) {
+    var loader, material;
     material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00
+      color: 0xffffff
     });
-    this.geo = new THREE.Mesh(geometry, material);
+    loader = new THREE.JSONLoader();
+    loader.load('models/ship.json', (function(_this) {
+      return function(geometry) {
+        _this.geo = new THREE.Mesh(geometry, material);
+        _this.geo.scale.set(1, 1, 1);
+        _this.geo.position.y = 0;
+        _this.geo.position.x = 0;
+        return scene.add(_this.geo);
+      };
+    })(this));
   }
 
 
@@ -515,8 +541,11 @@ Ship = (function() {
    */
 
   Ship.prototype.move = function(x, y) {
-    this.geo.translateX(x);
-    return this.geo.translateY(y);
+    var _ref, _ref1;
+    if ((_ref = this.geo) != null) {
+      _ref.translateX(x);
+    }
+    return (_ref1 = this.geo) != null ? _ref1.translateY(y) : void 0;
   };
 
   return Ship;
