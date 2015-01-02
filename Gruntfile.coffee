@@ -20,7 +20,7 @@ module.exports = (grunt)->
           'src/index.html',
           'src/sass/**/*.scss'
         ]
-        tasks: ['build']
+        tasks: ['build:dev']
         options:
           livereload: true
 
@@ -37,9 +37,16 @@ module.exports = (grunt)->
     sass:
       dist:
         options:
-          style: 'expanded'
+          style: 'compressed'
+          sourcemap: 'none'
         files:
           'dist/app.css': 'src/sass/app.scss'
+      dev:
+        options:
+          style: 'nested'
+        files:
+          'dist/app.css': 'src/sass/app.scss'
+
 
     # grunt-contrib-copy
     copy:
@@ -57,6 +64,9 @@ module.exports = (grunt)->
           src: ['models/*.json']
           dest: 'dist/models'
         }]
+      sass:
+        src: 'src/sass/*'
+        dest: 'dist/'
 
 
   ###
@@ -76,14 +86,23 @@ module.exports = (grunt)->
 
   grunt.registerTask 'serve', ['server']
   grunt.registerTask 'server', [
-    'build',
+    'build:dev',
     'connect:server',
     'watch'
   ]
 
   grunt.registerTask 'build', [
     'browserify:dist',
+    'copy:sass',
     'sass:dist',
+    'copy:html',
+    'copy:models'
+  ]
+
+  grunt.registerTask 'build:dev', [
+    'browserify:dist',
+    'copy:sass',
+    'sass:dev',
     'copy:html',
     'copy:models'
   ]
