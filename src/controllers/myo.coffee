@@ -3,8 +3,8 @@ Myo = require('myo')
 
 class MyoController extends BaseController
 
-  init: ->
-    @super()
+  constructor: ->
+    super()
 
     myo = Myo.create()
     # Use the accelerometer to get the up/down pitch of the arm
