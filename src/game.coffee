@@ -1,3 +1,5 @@
+Obstacle = require('./obstacle.coffee')
+
 class Game
 
   constructor: ->
@@ -41,5 +43,9 @@ class Game
   addPlayer: (player)->
     @players.push player
     player.initMesh @scene
+
+  addObstacle: ->
+    obstacle = new Obstacle()
+    @scene.add obstacle.sphere
 
 module.exports = Game
