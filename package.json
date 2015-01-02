@@ -1,10 +1,10 @@
 {
-  "name": "cubefield-myo",
+  "name": "AsterAvoid",
   "version": "0.0.1",
-  "description": "It's like Cubefield, but with Myos!",
+  "description": "A simple game: avoid hitting the asteroids with your space ship",
   "repository": {
     "type": "git",
-    "url": "http://github.com:alexlafroscia/cubefield-myo.git"
+    "url": "http://github.com:alexlafroscia/asteravoid.git"
   },
   "devDependencies": {
     "coffeeify": "^1.0.0",
