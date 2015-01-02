@@ -3,8 +3,8 @@ class Obstacle
   ###
   # Class Properties
   ###
-  @fieldWidth = 40
-  @fieldHeight = 7
+  @fieldWidth = 80
+  @fieldHeight = 10
 
   ###
   # Class Methods
