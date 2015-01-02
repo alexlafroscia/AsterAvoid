@@ -324,29 +324,33 @@ function ws(uri, protocols, opts) {
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
 },{}],3:[function(require,module,exports){
-var Controller, Game, Myo, Player, controller, game, myo, player1, render;
+var ArrowKeyController, Game, Player, WASDKeyController, arrowController, game, player1, player2, render, wasdController;
 
 Function.prototype.property = function(prop, desc) {
   return Object.defineProperty(this.prototype, prop, desc);
 };
 
-Myo = require('myo');
+Game = require('./game.coffee');
 
 Player = require('./player.coffee');
 
-Game = require('./game.coffee');
+WASDKeyController = require('./controllers/wasd_keys.coffee');
 
-Controller = require('./controller.coffee');
+ArrowKeyController = require('./controllers/arrow_keys.coffee');
 
 game = new Game();
 
-myo = Myo.create();
+wasdController = new WASDKeyController();
 
-controller = new Controller('myo', myo);
+player1 = new Player(wasdController, 1);
 
-player1 = new Player(controller);
+arrowController = new ArrowKeyController();
+
+player2 = new Player(arrowController, 2);
 
 game.addPlayer(player1);
+
+game.addPlayer(player2);
 
 render = function() {
   var i, _i, _ref;
@@ -354,6 +358,8 @@ render = function() {
   for (i = _i = 0, _ref = game.players.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
     game.players[i].updatePosition();
   }
+  game.camera.position.z -= 1;
+  game.addObstacle();
   return game.rerender();
 };
 
@@ -361,37 +367,77 @@ render();
 
 
 
-},{"./controller.coffee":4,"./game.coffee":5,"./player.coffee":6,"myo":1}],4:[function(require,module,exports){
+},{"./controllers/arrow_keys.coffee":4,"./controllers/wasd_keys.coffee":7,"./game.coffee":8,"./player.coffee":10}],4:[function(require,module,exports){
+var ArrowKeyController, BaseController,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseController = require('./base.coffee');
+
+ArrowKeyController = (function(_super) {
+  __extends(ArrowKeyController, _super);
+
+  function ArrowKeyController() {
+    var MOVE_AMOUNT;
+    ArrowKeyController.__super__.constructor.call(this);
+    MOVE_AMOUNT = 0.5;
+    document.addEventListener('keydown', (function(_this) {
+      return function(e) {
+        e = e || window.event;
+        switch (e.which) {
+          case 39:
+            _this.xValue = MOVE_AMOUNT;
+            break;
+          case 37:
+            _this.xValue = -MOVE_AMOUNT;
+            break;
+          case 38:
+            _this.yValue = MOVE_AMOUNT;
+            break;
+          case 40:
+            _this.yValue = -MOVE_AMOUNT;
+            break;
+        }
+      };
+    })(this));
+    document.addEventListener('keyup', (function(_this) {
+      return function(e) {
+        e = e || window.event;
+        e = e || window.event;
+        switch (e.which) {
+          case 39:
+          case 37:
+            _this.xValue = 0;
+            break;
+          case 38:
+          case 40:
+            _this.yValue = 0;
+            break;
+        }
+      };
+    })(this));
+  }
+
+  ArrowKeyController.prototype.getBaseYaw = function() {
+    return 0;
+  };
+
+  return ArrowKeyController;
+
+})(BaseController);
+
+module.exports = ArrowKeyController;
+
+
+
+},{"./base.coffee":5}],5:[function(require,module,exports){
 var Controller;
 
 Controller = (function() {
-  function Controller(type, myo) {
-    this.type = type;
-    this.myo = myo != null ? myo : null;
+  function Controller() {
     this.xValue = 0;
     this.yValue = 0;
     this.baseYaw = null;
-    if (type === 'myo') {
-      myo.on('accelerometer', (function(_this) {
-        return function(data) {
-          if (_this.direction === 'toward_elbow') {
-            return controller.yValue = -data.x;
-          } else {
-            return controller.yValue = data.x;
-          }
-        };
-      })(this));
-      myo.on('orientation', (function(_this) {
-        return function(data) {
-          var thisYaw;
-          if (_this.baseYaw == null) {
-            _this.getBaseYaw();
-          }
-          thisYaw = _this.getYaw();
-          return _this.xValue = -(thisYaw - _this.baseYaw) / 5;
-        };
-      })(this));
-    }
   }
 
 
@@ -400,20 +446,11 @@ Controller = (function() {
    */
 
   Controller.prototype.getYaw = function() {
-    var data, p1, yaw, yaw_w;
-    if (this.type === 'myo') {
-      data = this.myo.lastIMU.orientation;
-      p1 = 2.0 * (data.w * data.z + data.x * data.y);
-      yaw = Math.atan2(p1, 1.0 - 2.0 * (data.y * data.y + data.z * data.z));
-      yaw_w = (yaw + Math.PI / 2.0) / Math.PI * 18;
-      return yaw_w;
-    }
+    throw new Error('getYaw() needs to implemented by subclass');
   };
 
   Controller.prototype.getBaseYaw = function() {
-    if (this.type === 'myo') {
-      return this.baseYaw = this.getYaw();
-    }
+    throw new Error('getBaseYaw() needs to implemented by subclass');
   };
 
   return Controller;
@@ -424,8 +461,135 @@ module.exports = Controller;
 
 
 
-},{}],5:[function(require,module,exports){
-var Game;
+},{}],6:[function(require,module,exports){
+var BaseController, Myo, MyoController,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseController = require('./base.coffee');
+
+Myo = require('myo');
+
+MyoController = (function(_super) {
+  __extends(MyoController, _super);
+
+  function MyoController() {
+    var myo;
+    MyoController.__super__.constructor.call(this);
+    myo = Myo.create();
+    myo.on('accelerometer', (function(_this) {
+      return function(data) {
+        if (_this.direction === 'toward_elbow') {
+          return controller.yValue = -data.x;
+        } else {
+          return controller.yValue = data.x;
+        }
+      };
+    })(this));
+    myo.on('orientation', (function(_this) {
+      return function(data) {
+        var thisYaw;
+        if (_this.baseYaw == null) {
+          _this.getBaseYaw();
+        }
+        thisYaw = _this.getYaw();
+        return _this.xValue = -(thisYaw - _this.baseYaw) / 5;
+      };
+    })(this));
+  }
+
+
+  /*
+   * Instance methods
+   */
+
+  MyoController.prototype.getYaw = function() {
+    var data, p1, yaw, yaw_w;
+    data = this.myo.lastIMU.orientation;
+    p1 = 2.0 * (data.w * data.z + data.x * data.y);
+    yaw = Math.atan2(p1, 1.0 - 2.0 * (data.y * data.y + data.z * data.z));
+    yaw_w = (yaw + Math.PI / 2.0) / Math.PI * 18;
+    return yaw_w;
+  };
+
+  MyoController.prototype.getBaseYaw = function() {
+    return this.baseYaw = this.getYaw();
+  };
+
+  return MyoController;
+
+})(BaseController);
+
+module.exports = MyoController;
+
+
+
+},{"./base.coffee":5,"myo":1}],7:[function(require,module,exports){
+var BaseController, WASDKeyController,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseController = require('./base.coffee');
+
+WASDKeyController = (function(_super) {
+  __extends(WASDKeyController, _super);
+
+  function WASDKeyController() {
+    var MOVE_AMOUNT;
+    WASDKeyController.__super__.constructor.call(this);
+    MOVE_AMOUNT = 0.5;
+    document.addEventListener('keydown', (function(_this) {
+      return function(e) {
+        e = e || window.event;
+        switch (e.which) {
+          case 68:
+            _this.xValue = MOVE_AMOUNT;
+            break;
+          case 65:
+            _this.xValue = -MOVE_AMOUNT;
+            break;
+          case 87:
+            _this.yValue = MOVE_AMOUNT;
+            break;
+          case 83:
+            _this.yValue = -MOVE_AMOUNT;
+            break;
+        }
+      };
+    })(this));
+    document.addEventListener('keyup', (function(_this) {
+      return function(e) {
+        e = e || window.event;
+        switch (e.which) {
+          case 65:
+          case 68:
+            _this.xValue = 0;
+            break;
+          case 87:
+          case 83:
+            _this.yValue = 0;
+            break;
+        }
+      };
+    })(this));
+  }
+
+  WASDKeyController.prototype.getBaseYaw = function() {
+    return 0;
+  };
+
+  return WASDKeyController;
+
+})(BaseController);
+
+module.exports = WASDKeyController;
+
+
+
+},{"./base.coffee":5}],8:[function(require,module,exports){
+var Game, Obstacle;
+
+Obstacle = require('./obstacle.coffee');
 
 Game = (function() {
   function Game() {
@@ -460,6 +624,13 @@ Game = (function() {
     return player.initMesh(this.scene);
   };
 
+  Game.prototype.addObstacle = function() {
+    var obstacle, zPosition;
+    zPosition = this.camera.position.z - 120;
+    obstacle = new Obstacle(zPosition);
+    return this.scene.add(obstacle.sphere);
+  };
+
   return Game;
 
 })();
@@ -468,14 +639,64 @@ module.exports = Game;
 
 
 
-},{}],6:[function(require,module,exports){
+},{"./obstacle.coffee":9}],9:[function(require,module,exports){
+var Obstacle;
+
+Obstacle = (function() {
+
+  /*
+   * Class Properties
+   */
+  Obstacle.fieldWidth = 80;
+
+  Obstacle.fieldHeight = 10;
+
+
+  /*
+   * Class Methods
+   */
+
+  Obstacle.createXPosition = function() {
+    var random;
+    random = Math.floor((Math.random() * Obstacle.fieldWidth) + 1);
+    return random - (this.fieldWidth / 2);
+  };
+
+  Obstacle.createYPosition = function() {
+    var random;
+    random = Math.floor((Math.random() * Obstacle.fieldHeight) + 1);
+    return random - (this.fieldHeight / 2);
+  };
+
+  function Obstacle(zValue) {
+    var geometry, material;
+    geometry = new THREE.SphereGeometry((Math.random() * 2) + 1, 2, 2);
+    material = new THREE.MeshLambertMaterial({
+      color: 'green'
+    });
+    this.sphere = new THREE.Mesh(geometry, material);
+    this.sphere.position.x = this.constructor.createXPosition();
+    this.sphere.position.y = this.constructor.createYPosition();
+    this.sphere.position.z = zValue;
+  }
+
+  return Obstacle;
+
+})();
+
+module.exports = Obstacle;
+
+
+
+},{}],10:[function(require,module,exports){
 var Player, Ship;
 
 Ship = require('./ship.coffee');
 
 Player = (function() {
-  function Player(controller) {
+  function Player(controller, id) {
     this.controller = controller;
+    this.id = id;
   }
 
 
@@ -502,11 +723,17 @@ Player = (function() {
 
   Player.prototype.updatePosition = function() {
     var _ref;
-    return (_ref = this.ship) != null ? _ref.move(this.xValue, this.yValue) : void 0;
+    return (_ref = this.ship) != null ? _ref.move(this.xValue, this.yValue, -1) : void 0;
   };
 
   Player.prototype.initMesh = function(scene) {
-    return this.ship = new Ship(scene);
+    var color;
+    if (this.id === 1) {
+      color = 'blue';
+    } else {
+      color = 'red';
+    }
+    return this.ship = new Ship(scene, color);
   };
 
   return Player;
@@ -517,14 +744,14 @@ module.exports = Player;
 
 
 
-},{"./ship.coffee":7}],7:[function(require,module,exports){
+},{"./ship.coffee":11}],11:[function(require,module,exports){
 var Ship;
 
 Ship = (function() {
-  function Ship(scene) {
+  function Ship(scene, color) {
     var loader, material;
     material = new THREE.MeshLambertMaterial({
-      color: 'blue'
+      color: color
     });
     material.shading = THREE.FlatShading;
     loader = new THREE.JSONLoader();
@@ -544,12 +771,15 @@ Ship = (function() {
    * Instance methods
    */
 
-  Ship.prototype.move = function(x, y) {
-    var _ref, _ref1;
+  Ship.prototype.move = function(x, y, z) {
+    var _ref, _ref1, _ref2;
     if ((_ref = this.geo) != null) {
       _ref.translateX(x);
     }
-    return (_ref1 = this.geo) != null ? _ref1.translateY(y) : void 0;
+    if ((_ref1 = this.geo) != null) {
+      _ref1.translateY(y);
+    }
+    return (_ref2 = this.geo) != null ? _ref2.translateZ(z) : void 0;
   };
 
   return Ship;
@@ -560,4 +790,4 @@ module.exports = Ship;
 
 
 
-},{}]},{},[3,4,5,6,7]);
+},{}]},{},[3,4,5,6,7,8,9,10,11]);
