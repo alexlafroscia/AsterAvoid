@@ -7,7 +7,7 @@ class WASDKeyController extends BaseController
 
     MOVE_AMOUNT = 0.5
 
-    document.onkeydown = (e)=>
+    document.addEventListener 'keydown', (e)=>
       e = e || window.event
       switch e.which
         when 68
@@ -23,7 +23,7 @@ class WASDKeyController extends BaseController
           @yValue = -MOVE_AMOUNT
           break
 
-    document.onkeyup = (e)=>
+    document.addEventListener 'keyup', (e)=>
       e = e || window.event
       switch e.which
         when 65, 68

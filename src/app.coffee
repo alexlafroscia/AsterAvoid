@@ -7,14 +7,20 @@ Function::property = (prop, desc) ->
 Game = require('./game.coffee')
 Player = require('./player.coffee')
 WASDKeyController = require('./controllers/wasd_keys.coffee')
+ArrowKeyController = require('./controllers/arrow_keys.coffee')
 
 
 # Start the game
 game = new Game()
-controller = new WASDKeyController()
-player1 = new Player(controller)
+
+wasdController = new WASDKeyController()
+player1 = new Player(wasdController, 1)
+
+arrowController = new ArrowKeyController()
+player2 = new Player(arrowController, 2)
 
 game.addPlayer(player1)
+game.addPlayer(player2)
 
 # Render Loop
 render = ->

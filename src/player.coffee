@@ -2,7 +2,7 @@ Ship = require('./ship.coffee')
 
 class Player
 
-  constructor: (@controller)->
+  constructor: (@controller, @id)->
 
 
   ###
@@ -24,6 +24,10 @@ class Player
     @ship?.move @xValue, @yValue, -1
 
   initMesh: (scene)->
-    @ship = new Ship(scene)
+    if @id == 1
+      color = 'blue'
+    else
+      color = 'red'
+    @ship = new Ship(scene, color)
 
 module.exports = Player

@@ -1,8 +1,8 @@
 class Ship
 
-  constructor: (scene)->
+  constructor: (scene, color)->
     material = new THREE.MeshLambertMaterial
-      color: 'blue'
+      color: color
     material.shading = THREE.FlatShading
     loader = new THREE.JSONLoader()
     loader.load 'models/ship.json', (geometry)=>
