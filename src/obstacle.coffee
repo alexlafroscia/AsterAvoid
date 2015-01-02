@@ -30,5 +30,6 @@ class Obstacle
     @sphere = new THREE.Mesh geometry, material
     @sphere.position.x = @constructor.createXPosition()
     @sphere.position.y = @constructor.createYPosition()
+    @sphere.position.z = zValue
 
 module.exports = Obstacle

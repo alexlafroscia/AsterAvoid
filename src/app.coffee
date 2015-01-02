@@ -6,12 +6,12 @@ Function::property = (prop, desc) ->
 # Require components from other files
 Game = require('./game.coffee')
 Player = require('./player.coffee')
-MyoController = require('./controllers/myo.coffee')
+WASDKeyController = require('./controllers/wasd_keys.coffee')
 
 
 # Start the game
 game = new Game()
-controller = new MyoController()
+controller = new WASDKeyController()
 player1 = new Player(controller)
 
 game.addPlayer(player1)
@@ -21,5 +21,11 @@ render = ->
   requestAnimationFrame(render)
   for i in [0...game.players.length]
     game.players[i].updatePosition()
+
+  # Move the camera forward
+  game.camera.position.z -= 1
+
+  # Add a new obstacle
+  game.addObstacle()
   game.rerender()
 render()

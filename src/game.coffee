@@ -45,7 +45,8 @@ class Game
     player.initMesh @scene
 
   addObstacle: ->
-    obstacle = new Obstacle()
+    zPosition = @camera.position.z - 100
+    obstacle = new Obstacle zPosition
     @scene.add obstacle.sphere
 
 module.exports = Game

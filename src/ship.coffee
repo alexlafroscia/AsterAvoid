@@ -22,8 +22,9 @@ class Ship
   ###
 
   # Update the location of the ship
-  move: (x, y)->
+  move: (x, y, z)->
     @geo?.translateX x
     @geo?.translateY y
+    @geo?.translateZ z
 
 module.exports = Ship
