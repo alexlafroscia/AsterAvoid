@@ -8,7 +8,7 @@ git init
 git config user.name "Alex LaFroscia"
 git config user.email "alex@lafroscia.com"
 
-git remote add upstream "https://$GH_TOKEN@github.com/alexlafroscia/cubefield-myo.git"
+git remote add upstream "https://$GH_TOKEN@github.com/alexlafroscia/AsterAvoid"
 git fetch upstream && git reset upstream/gh-pages
 
 touch .
