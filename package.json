@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "grunt-contrib-sass": "^0.8.1",
     "myo": "git://github.com/stolksdorf/myo.js"
   },
   "jshintConfig": {

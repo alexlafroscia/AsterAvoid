@@ -14,7 +14,12 @@ module.exports = (grunt)->
     # grunt-contrib-watch
     watch:
       js:
-        files: ['src/**/*.coffee', 'src/**/*.js']
+        files: [
+          'src/js/**/*.coffee',
+          'src/js/**/*.js',
+          'src/index.html',
+          'src/sass/**/*.scss'
+        ]
         tasks: ['build']
         options:
           livereload: true
@@ -23,9 +28,18 @@ module.exports = (grunt)->
     browserify:
       dist:
         files:
-          'dist/app.js': ['src/**/*.js', 'src/**/*.coffee']
+          'dist/app.js': ['src/js/**/*.js', 'src/js/**/*.coffee']
         options:
           transform: ['coffeeify']
+
+
+    # grunt-contrib-sass
+    sass:
+      dist:
+        options:
+          style: 'expanded'
+        files:
+          'dist/app.css': 'src/sass/app.scss'
 
     # grunt-contrib-copy
     copy:
@@ -52,6 +66,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-browserify'
   grunt.loadNpmTasks 'grunt-contrib-copy'
+  grunt.loadNpmTasks 'grunt-contrib-sass'
 
 
   ###
@@ -68,6 +83,7 @@ module.exports = (grunt)->
 
   grunt.registerTask 'build', [
     'browserify:dist',
+    'sass:dist',
     'copy:html',
     'copy:models'
   ]
