@@ -367,7 +367,7 @@ render();
 
 
 
-},{"./controllers/arrow_keys.coffee":4,"./controllers/wasd_keys.coffee":7,"./game.coffee":8,"./player.coffee":10}],4:[function(require,module,exports){
+},{"./controllers/arrow_keys.coffee":4,"./controllers/wasd_keys.coffee":8,"./game.coffee":9,"./player.coffee":11}],4:[function(require,module,exports){
 var ArrowKeyController, BaseController,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -525,6 +525,55 @@ module.exports = MyoController;
 
 
 },{"./base.coffee":5,"myo":1}],7:[function(require,module,exports){
+var BaseController, TiltController,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseController = require('./base.coffee');
+
+TiltController = (function(_super) {
+  __extends(TiltController, _super);
+
+  function TiltController() {
+    TiltController.__super__.constructor.call(this);
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', (function(_this) {
+        return function() {
+          return _this.tilt(event.beta, event.gamma);
+        };
+      })(this), true);
+    } else if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', (function(_this) {
+        return function() {
+          return _this.tilt(event.acceleration.x * 2, event.acceleration.y * 2);
+        };
+      })(this), true);
+    } else {
+      window.addEventListener('MozOrientation', (function(_this) {
+        return function() {
+          return _this.tilt(orientation.x * 50, orientation.y * 50);
+        };
+      })(this), true);
+    }
+  }
+
+  TiltController.prototype.tilt = function(beta, gamma) {
+    if (this.baseYaw == null) {
+      this.baseYaw = gamma;
+    }
+    this.xValue = beta / 15;
+    return this.yValue = (gamma - this.baseYaw) / 20;
+  };
+
+  return TiltController;
+
+})(BaseController);
+
+module.exports = TiltController;
+
+
+
+},{"./base.coffee":5}],8:[function(require,module,exports){
 var BaseController, WASDKeyController,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -586,7 +635,7 @@ module.exports = WASDKeyController;
 
 
 
-},{"./base.coffee":5}],8:[function(require,module,exports){
+},{"./base.coffee":5}],9:[function(require,module,exports){
 var Game, Obstacle;
 
 Obstacle = require('./obstacle.coffee');
@@ -639,7 +688,7 @@ module.exports = Game;
 
 
 
-},{"./obstacle.coffee":9}],9:[function(require,module,exports){
+},{"./obstacle.coffee":10}],10:[function(require,module,exports){
 var Obstacle;
 
 Obstacle = (function() {
@@ -688,7 +737,7 @@ module.exports = Obstacle;
 
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var Player, Ship;
 
 Ship = require('./ship.coffee');
@@ -744,7 +793,7 @@ module.exports = Player;
 
 
 
-},{"./ship.coffee":11}],11:[function(require,module,exports){
+},{"./ship.coffee":12}],12:[function(require,module,exports){
 var Ship;
 
 Ship = (function() {
@@ -790,4 +839,4 @@ module.exports = Ship;
 
 
 
-},{}]},{},[3,4,5,6,7,8,9,10,11]);
+},{}]},{},[3,4,5,6,7,8,9,10,11,12]);
