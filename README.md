@@ -1,7 +1,7 @@
 AsterAvoid
 ==========
 
-[![Build Status](https://travis-ci.org/alexlafroscia/AsterAvoid.svg?branch=master)](https://travis-ci.org/alexlafroscia/AsterAvoid)
+[![Build Status](https://travis-ci.org/alexlafroscia/asteravoid.svg?branch=master)](https://travis-ci.org/alexlafroscia/asteravoid)
 
 A simple game using [Three.js](http://threejs.org/).  Move your ship to avoid the asteroids and try to last as long as you can.
 
