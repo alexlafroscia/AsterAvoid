@@ -35,12 +35,14 @@ module.exports = (grunt)->
 
     # grunt-contrib-sass
     sass:
+      # Compile Sass without maps and compressed
       dist:
         options:
           style: 'compressed'
           sourcemap: 'none'
         files:
           'dist/app.css': 'src/sass/app.scss'
+      # Use source maps, and use the nested style for the output CSS
       dev:
         options:
           style: 'nested'
@@ -50,6 +52,7 @@ module.exports = (grunt)->
 
     # grunt-contrib-copy
     copy:
+      # Copy the HTML file that glues everything together
       html:
         files: [{
           expand: true
@@ -57,6 +60,7 @@ module.exports = (grunt)->
           src: ['src/index.html']
           dest: 'dist/'
         }]
+      # Copy .json models that were exported by Blender
       models:
         files: [{
           expand: true
@@ -64,6 +68,8 @@ module.exports = (grunt)->
           src: ['models/*.json']
           dest: 'dist/models'
         }]
+      # Copy the Sass folder so that the source maps can reference the original
+      # files in the inspector
       sass:
         src: 'src/sass/*'
         dest: 'dist/'
@@ -84,6 +90,7 @@ module.exports = (grunt)->
   ###
   grunt.registerTask 'default', ['server']
 
+  # Start a local development server, using the development build steps
   grunt.registerTask 'serve', ['server']
   grunt.registerTask 'server', [
     'build:dev',
@@ -91,6 +98,7 @@ module.exports = (grunt)->
     'watch'
   ]
 
+  # Build the app for production
   grunt.registerTask 'build', [
     'browserify:dist',
     'copy:sass',
@@ -99,6 +107,7 @@ module.exports = (grunt)->
     'copy:models'
   ]
 
+  # Build the app for local development
   grunt.registerTask 'build:dev', [
     'browserify:dist',
     'copy:sass',
