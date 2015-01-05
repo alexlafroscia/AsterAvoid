@@ -22,8 +22,8 @@ class Obstacle
   constructor: (zValue)->
     geometry = new THREE.SphereGeometry(
       (Math.random() * 2) + 1,    # radius
-      2,    # segments
-      2     # rings
+      8,    # segments
+      10    # rings
     )
     material = new THREE.MeshLambertMaterial
       color: 'green'
