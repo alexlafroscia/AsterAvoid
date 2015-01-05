@@ -19,7 +19,7 @@ class Obstacle
 
 
 
-  constructor: (zValue)->
+  constructor: (@scene)->
     geometry = new THREE.SphereGeometry(
       (Math.random() * 2) + 1,    # radius
       8,    # segments
@@ -30,6 +30,15 @@ class Obstacle
     @sphere = new THREE.Mesh geometry, material
     @sphere.position.x = @constructor.createXPosition()
     @sphere.position.y = @constructor.createYPosition()
-    @sphere.position.z = zValue
+    @sphere.position.z = -120
+    @updateTime = new Date()
+    window.setInterval =>
+      if @sphere.position.z < 0
+        @sphere.position.z += 1
+      else
+        @scene.remove @sphere
+    , 5
+
+
 
 module.exports = Obstacle

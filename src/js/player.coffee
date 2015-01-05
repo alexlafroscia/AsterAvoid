@@ -21,7 +21,7 @@ class Player
   ###
 
   updatePosition: ->
-    @ship?.move @xValue, @yValue, -1
+    @ship?.move @xValue, @yValue
 
   initMesh: (scene)->
     if @id == 1

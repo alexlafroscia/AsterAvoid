@@ -13,6 +13,19 @@ ArrowKeyController = require('./controllers/arrow_keys.coffee')
 # Start the game
 game = new Game()
 
+# Set up the Render Loop
+render = ->
+  requestAnimationFrame(render)
+  for i in [0...game.players.length]
+    game.players[i].updatePosition()
+
+  # Add a new obstacle
+  game.addObstacle()
+
+  # Tell the game to re-render the screen
+  game.rerender()
+
+
 wasdController = new WASDKeyController()
 player1 = new Player(wasdController, 1)
 
@@ -22,16 +35,5 @@ player2 = new Player(arrowController, 2)
 game.addPlayer(player1)
 game.addPlayer(player2)
 
-# Render Loop
-render = ->
-  requestAnimationFrame(render)
-  for i in [0...game.players.length]
-    game.players[i].updatePosition()
-
-  # Move the camera forward
-  game.camera.position.z -= 1
-
-  # Add a new obstacle
-  game.addObstacle()
-  game.rerender()
+# Start the game
 render()
