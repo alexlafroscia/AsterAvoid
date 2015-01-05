@@ -340,6 +340,16 @@ ArrowKeyController = require('./controllers/arrow_keys.coffee');
 
 game = new Game();
 
+render = function() {
+  var i, _i, _ref;
+  requestAnimationFrame(render);
+  for (i = _i = 0, _ref = game.players.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+    game.players[i].updatePosition();
+  }
+  game.addObstacle();
+  return game.rerender();
+};
+
 wasdController = new WASDKeyController();
 
 player1 = new Player(wasdController, 1);
@@ -351,17 +361,6 @@ player2 = new Player(arrowController, 2);
 game.addPlayer(player1);
 
 game.addPlayer(player2);
-
-render = function() {
-  var i, _i, _ref;
-  requestAnimationFrame(render);
-  for (i = _i = 0, _ref = game.players.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-    game.players[i].updatePosition();
-  }
-  game.camera.position.z -= 1;
-  game.addObstacle();
-  return game.rerender();
-};
 
 render();
 
@@ -674,9 +673,8 @@ Game = (function() {
   };
 
   Game.prototype.addObstacle = function() {
-    var obstacle, zPosition;
-    zPosition = this.camera.position.z - 120;
-    obstacle = new Obstacle(zPosition);
+    var obstacle;
+    obstacle = new Obstacle(this.scene);
     return this.scene.add(obstacle.sphere);
   };
 
@@ -717,16 +715,27 @@ Obstacle = (function() {
     return random - (this.fieldHeight / 2);
   };
 
-  function Obstacle(zValue) {
+  function Obstacle(scene) {
     var geometry, material;
-    geometry = new THREE.SphereGeometry((Math.random() * 2) + 1, 2, 2);
+    this.scene = scene;
+    geometry = new THREE.SphereGeometry((Math.random() * 2) + 1, 8, 10);
     material = new THREE.MeshLambertMaterial({
       color: 'green'
     });
     this.sphere = new THREE.Mesh(geometry, material);
     this.sphere.position.x = this.constructor.createXPosition();
     this.sphere.position.y = this.constructor.createYPosition();
-    this.sphere.position.z = zValue;
+    this.sphere.position.z = -120;
+    this.updateTime = new Date();
+    window.setInterval((function(_this) {
+      return function() {
+        if (_this.sphere.position.z < 0) {
+          return _this.sphere.position.z += 1;
+        } else {
+          return _this.scene.remove(_this.sphere);
+        }
+      };
+    })(this), 5);
   }
 
   return Obstacle;
@@ -772,7 +781,7 @@ Player = (function() {
 
   Player.prototype.updatePosition = function() {
     var _ref;
-    return (_ref = this.ship) != null ? _ref.move(this.xValue, this.yValue, -1) : void 0;
+    return (_ref = this.ship) != null ? _ref.move(this.xValue, this.yValue) : void 0;
   };
 
   Player.prototype.initMesh = function(scene) {
@@ -810,6 +819,7 @@ Ship = (function() {
         _this.geo.scale.set(1, 1, 1);
         _this.geo.position.y = 0;
         _this.geo.position.x = 0;
+        _this.geo.position.z = 0;
         return scene.add(_this.geo);
       };
     })(this));
@@ -820,15 +830,12 @@ Ship = (function() {
    * Instance methods
    */
 
-  Ship.prototype.move = function(x, y, z) {
-    var _ref, _ref1, _ref2;
+  Ship.prototype.move = function(x, y) {
+    var _ref, _ref1;
     if ((_ref = this.geo) != null) {
       _ref.translateX(x);
     }
-    if ((_ref1 = this.geo) != null) {
-      _ref1.translateY(y);
-    }
-    return (_ref2 = this.geo) != null ? _ref2.translateZ(z) : void 0;
+    return (_ref1 = this.geo) != null ? _ref1.translateY(y) : void 0;
   };
 
   return Ship;
